@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'unified_setup_screen.dart';
-import '../data/local_categories.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -49,15 +48,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       _HomeButton(
-                        label: 'CATEGORÍAS',
-                        icon: Icons.grid_view_rounded,
-                        isSecondary: true,
-                        onTap: () {
-                          _showCategoriesDialog(context);
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      _HomeButton(
                         label: 'SALIR',
                         icon: Icons.exit_to_app_rounded,
                         isSecondary: true,
@@ -72,66 +62,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showCategoriesDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Text(
-              'Categorías Disponibles',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                ),
-                itemCount: LocalCategories.categories.length,
-                itemBuilder: (context, index) {
-                  final cat = LocalCategories.categories[index];
-                  return Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          cat.icon,
-                          style: const TextStyle(fontSize: 32),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        cat.name,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -159,8 +89,9 @@ class _HomeButton extends StatelessWidget {
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: isSecondary
-              ? Colors.white.withOpacity(0.2)
+              ? const Color(0xFF00E676).withValues(alpha: 0.5)
               : Colors.white,
+          shadowColor: const Color(0xFF00E676).withValues(alpha: 0.5),
           foregroundColor: isSecondary ? Colors.white : const Color(0xFFFF512F),
           elevation: isSecondary ? 0 : 8,
           shape: RoundedRectangleBorder(

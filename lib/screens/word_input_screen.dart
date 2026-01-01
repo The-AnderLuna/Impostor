@@ -38,9 +38,14 @@ class _InputWordsScreenState extends State<InputWordsScreen> {
 
     return GradientScaffold(
       appBar: AppBar(
-        title: const Text('Escribe una Palabra'),
+        title: const Text(
+          'PALABRA SECRETA',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -50,28 +55,30 @@ class _InputWordsScreenState extends State<InputWordsScreen> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFF1E1E1E),
               borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.white12),
               boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 10),
+                BoxShadow(color: Colors.black45, blurRadius: 20),
               ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Jugador ${provider.currentPlayerIndex + 1}',
+                  provider.currentPlayer.name,
                   style: const TextStyle(
-                    fontSize: 32,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFFFF512F),
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   'Escribe una palabra secreta (Lugar, Objeto, etc).',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
                 const SizedBox(height: 32),
                 TextField(
@@ -79,14 +86,15 @@ class _InputWordsScreenState extends State<InputWordsScreen> {
                   focusNode: _focusNode,
                   decoration: InputDecoration(
                     hintText: 'Ej. "Jurasic Park"...',
+                    hintStyle: const TextStyle(color: Colors.white30),
                     filled: true,
-                    fillColor: Colors.grey[100],
+                    fillColor: Colors.white10,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
-                  style: const TextStyle(fontSize: 18),
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 const SizedBox(height: 32),
                 SizedBox(

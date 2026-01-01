@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Who is the Impostor',
+      title: 'Impostor Latino',
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: const Color(0xFFFF512F),

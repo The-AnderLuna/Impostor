@@ -6,6 +6,7 @@ class GradientScaffold extends StatelessWidget {
   final PreferredSizeWidget? appBar;
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
+  final bool? resizeToAvoidBottomInset;
 
   const GradientScaffold({
     super.key,
@@ -14,12 +15,14 @@ class GradientScaffold extends StatelessWidget {
     this.appBar,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
+    this.resizeToAvoidBottomInset,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       appBar: appBar,
       bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,

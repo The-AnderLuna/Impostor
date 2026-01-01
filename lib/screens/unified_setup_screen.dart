@@ -5,6 +5,7 @@ import '../providers/game_provider.dart';
 import '../widgets/gradient_scaffold.dart';
 import 'role_reveal_screen.dart';
 import 'word_input_screen.dart';
+import 'player_selection_screen.dart';
 
 class UnifiedSetupScreen extends StatefulWidget {
   const UnifiedSetupScreen({super.key});
@@ -22,350 +23,405 @@ class _UnifiedSetupScreenState extends State<UnifiedSetupScreen> {
     return GradientScaffold(
       appBar: AppBar(
         title: const Text(
-          'Nueva Partida',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          'CONFIGURACIÓN',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.2,
+          ),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 20,
-                  offset: Offset(0, 10),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8,
                 ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Configurar',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFFFF512F),
-                  ),
-                ),
-                const SizedBox(height: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Main Card
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E1E1E),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.white12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 30,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          // Jugadores Row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'JUGADORES',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${provider.playerCount} Jugadores',
+                                    style: const TextStyle(
+                                      color: Color(0xFF00E676),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const PlayerSelectionScreen(),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.edit, size: 16),
+                                label: const Text('EDITAR'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2C2C2C),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
 
-                // Jugadores
-                _SettingItem(
-                  icon: '👥',
-                  title: 'Jugadores',
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${provider.playerCount}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 24),
+                            child: Divider(color: Colors.white12, height: 1),
+                          ),
+                          // Impostores Row
+                          _CounterRow(
+                            label: 'IMPOSTORES',
+                            value: provider.impostorCount,
+                            min: 1,
+                            max: provider.playerCount - 1,
+                            isRed: true,
+                            onChanged: (val) =>
+                                provider.setImpostorCount(val.toDouble()),
+                          ),
+                        ],
                       ),
-                      const Icon(Icons.chevron_right, color: Colors.grey),
-                    ],
-                  ),
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (_) => _ValuePicker(
-                        title: 'Número de Jugadores',
-                        value: provider.playerCount,
-                        min: 3,
-                        max: 20,
-                        onChanged: (val) => provider.setPlayerCount(val),
-                      ),
-                    );
-                  },
-                ),
-                const Divider(),
+                    ),
 
-                // Impostores
-                _SettingItem(
-                  icon: '🕵️',
-                  title: 'Impostores',
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '${provider.impostorCount}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Icon(Icons.chevron_right, color: Colors.grey),
-                    ],
-                  ),
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (_) => _ValuePicker(
-                        title: 'Número de Impostores',
-                        value: provider.impostorCount,
-                        min: 1,
-                        max: (provider.playerCount - 1)
-                            .toDouble(), // Max impostors < players
-                        onChanged: (val) => provider.setImpostorCount(val),
-                      ),
-                    );
-                  },
-                ),
-                const Divider(),
+                    const SizedBox(height: 24),
 
-                // Categorias
-                if (!provider.isCustomMode)
-                  _SettingItem(
-                    icon: provider.selectedCategory?.icon ?? '🎲',
-                    title: 'Categoría',
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            provider.selectedCategory?.name ?? 'Seleccionar',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                    // Categories Section
+                    if (!provider.isCustomMode) ...[
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8, bottom: 12),
+                        child: Text(
+                          'CATEGORÍAS',
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            letterSpacing: 1,
                           ),
                         ),
-                        const Icon(Icons.chevron_right, color: Colors.grey),
-                      ],
-                    ),
-                    onTap: () {
-                      _showCategoryPicker(context, provider);
-                    },
-                  ),
+                      ),
+                      SizedBox(
+                        height: 155,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: LocalCategories.categories.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (ctx, i) {
+                            final cat = LocalCategories.categories[i];
+                            final isSelected = provider.selectedCategories.any(
+                              (c) => c.id == cat.id,
+                            );
+                            return GestureDetector(
+                              onTap: () => provider.toggleCategory(cat),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: 110,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFF6A0C28)
+                                      : const Color(0xFF2C2C2C),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? const Color(0xFFFF0040)
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      cat.icon,
+                                      style: const TextStyle(fontSize: 40),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      cat.name,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.white70,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
 
-                if (provider.isCustomMode)
-                  _SettingItem(
-                    icon: '✏️',
-                    title: 'Modo',
-                    trailing: const Text(
-                      'Personalizado',
-                      style: TextStyle(
-                        color: Colors.purple,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 24),
+
+                    // Options
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2C2C2C),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        children: [
+                          if (!provider.isCustomMode) ...[
+                            _SwitchRow(
+                              label: 'Pista para Impostores',
+                              value: provider.impostorHintsEnabled,
+                              onChanged: (val) =>
+                                  provider.setImpostorHints(val),
+                            ),
+                            const Divider(color: Colors.white10, height: 1),
+                          ],
+                          _SwitchRow(
+                            label: 'Modo Personalizado',
+                            value: provider.isCustomMode,
+                            onChanged: (val) => provider.setCustomMode(val),
+                          ),
+                        ],
                       ),
                     ),
-                    onTap: () => provider.setCustomMode(false),
-                  ),
 
-                const SizedBox(height: 24),
+                    const SizedBox(height: 40),
 
-                SwitchListTile(
-                  title: const Text(
-                    'Pistas para Impostores',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  subtitle: const Text(
-                    'Muestra la categoría al impostor para ayudarle',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                  value: provider.impostorHintsEnabled,
-                  activeTrackColor: const Color(0xFFFF512F),
-                  activeThumbColor: Colors.white,
-                  onChanged: (val) => provider.setImpostorHints(val),
+                    // Start Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (!provider.isCustomMode &&
+                              provider.selectedCategories.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  '¡Selecciona al menos una categoría!',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                backgroundColor: Colors.redAccent.withValues(
+                                  alpha: 0.9,
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+                          provider.proceedToGameOrInput();
+                          if (provider.isCustomMode) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const InputWordsScreen(),
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const RoleRevealScreen(),
+                              ),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(
+                            0xFF00E676,
+                          ), // Bright Green
+                          foregroundColor: const Color(0xFF003300),
+                          elevation: 8,
+                          shadowColor: const Color(
+                            0xFF00E676,
+                          ).withValues(alpha: 0.4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: const Text(
+                          'INICIAR JUEGO',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-
-                const SizedBox(height: 12),
-
-                SwitchListTile(
-                  title: const Text(
-                    'Modo Palabras Personalizadas',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  value: provider.isCustomMode,
-                  activeTrackColor: const Color(0xFFFF512F),
-                  activeThumbColor: Colors.white,
-                  onChanged: (val) => provider.setCustomMode(val),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        child: SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: () {
-              if (!provider.isCustomMode && provider.selectedCategory == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Selecciona una categoría')),
-                );
-                return;
-              }
-              provider.proceedToGameOrInput();
-              if (provider.isCustomMode) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const InputWordsScreen()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RoleRevealScreen()),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
               ),
             ),
-            child: const Text(
-              'Comienza el juego',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-        ),
+          );
+        },
       ),
-    );
-  }
-
-  void _showCategoryPicker(BuildContext context, GameProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) {
-        return SizedBox(
-          height: 400,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: LocalCategories.categories.length,
-            itemBuilder: (ctx, i) {
-              final cat = LocalCategories.categories[i];
-              return ListTile(
-                leading: Text(cat.icon, style: const TextStyle(fontSize: 24)),
-                title: Text(
-                  cat.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  provider.selectCategory(cat);
-                  Navigator.pop(context);
-                },
-              );
-            },
-          ),
-        );
-      },
     );
   }
 }
 
-class _SettingItem extends StatelessWidget {
-  final String icon;
-  final String title;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-
-  const _SettingItem({
-    required this.icon,
-    required this.title,
-    this.trailing,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Text(icon, style: const TextStyle(fontSize: 24)),
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      trailing: trailing,
-      onTap: onTap,
-    );
-  }
-}
-
-// Stateful Picker to ensure it rebuilds correctly during drag
-class _ValuePicker extends StatefulWidget {
-  final String title;
+class _CounterRow extends StatelessWidget {
+  final String label;
   final int value;
-  final double min;
-  final double max;
-  final ValueChanged<double> onChanged;
+  final int min;
+  final int max;
+  final bool isRed;
+  final ValueChanged<int> onChanged;
 
-  const _ValuePicker({
-    required this.title,
+  const _CounterRow({
+    required this.label,
     required this.value,
     required this.min,
     required this.max,
     required this.onChanged,
+    this.isRed = false,
   });
 
   @override
-  State<_ValuePicker> createState() => _ValuePickerState();
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+        Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: const Color(0xFF2C2C2C),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove, color: Colors.white70),
+                onPressed: value > min ? () => onChanged(value - 1) : null,
+              ),
+              SizedBox(
+                width: 40,
+                child: Text(
+                  '$value',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isRed ? const Color(0xFFFF5252) : Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add, color: Colors.white70),
+                onPressed: value < max ? () => onChanged(value + 1) : null,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _ValuePickerState extends State<_ValuePicker> {
-  late double _currentValue;
+class _SwitchRow extends StatelessWidget {
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
-  @override
-  void initState() {
-    super.initState();
-    _currentValue = widget.value.toDouble();
-  }
+  const _SwitchRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 250,
-      padding: const EdgeInsets.all(16),
-      child: Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            widget.title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Expanded(
-            child: Slider(
-              value: _currentValue,
-              min: widget.min,
-              max: widget.max,
-              divisions: (widget.max - widget.min).toInt(),
-              label: '${_currentValue.toInt()}',
-              activeColor: const Color(0xFFFF512F),
-              onChanged: (val) {
-                setState(() {
-                  _currentValue = val;
-                });
-                widget.onChanged(val);
-              },
-            ),
-          ),
-          Text(
-            '${_currentValue.toInt()}',
+            label,
             style: const TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFF512F),
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeThumbColor: const Color(0xFF00E676),
+            activeTrackColor: const Color(0xFF004D26),
+            inactiveTrackColor: Colors.black45,
           ),
         ],
       ),
